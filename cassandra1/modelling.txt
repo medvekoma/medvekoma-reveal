@@ -1,0 +1,19 @@
+CREATE TABLE Bill_Clustering
+(
+	BillId int,
+	Seller text,
+	Buyer text,
+	ItemId int,
+	ItemName text,
+	ItemPrice decimal,
+	PRIMARY KEY (BillId, ItemId)
+);
+
+INSERT INTO bill_clustering (billid, itemid, Seller, Buyer) VALUES ( 1, 0, 'Seller1', 'Buyer1');
+
+INSERT INTO bill_clustering (billid, itemid, ItemName, ItemPrice) VALUES ( 1, 1001, 'iPad 32GB', 129900);
+INSERT INTO bill_clustering (billid, itemid, ItemName, ItemPrice) VALUES ( 1, 1015, 'Headset XDF', 7900);
+
+select * from bill_clustering ;
+
+list bill_clustering;

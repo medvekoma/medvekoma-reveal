@@ -1,0 +1,737 @@
+﻿<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>The Tale of Cassandra</title>
+
+		<meta name="description" content="Introduction to Apache Cassandra">
+		<meta name="author" content="Attila Szucs">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../css/reveal.min.css">
+		<link rel="stylesheet" href="../css/theme/beige.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+		
+		<style>
+.reveal pre code {
+	font-weight: bold;
+	font-size: larger
+}
+		</style>
+
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+			    <section>
+					<section id="mainslide">
+						<p>
+							<strong>&lt;epam&gt;</strong> 
+							<br/>
+							presents
+						</p>
+						<h2>●</h2> 
+						<h2>The Tale of</h2>
+						<h1>Cassandra</h1>
+						<h1>~</h1>
+						<p>
+							<small>Directed by</small>
+							<br/>
+							<strong>Attila Szűcs</strong>
+							<br/>
+							<small>(attila_szucs@epam.com)</small>
+						</p>
+						<p>
+							<small><a href="#/hotkeys">(user's guide)</a></small>
+						</p>
+					</section>
+					<section>
+						<h1>Cassandra</h1>
+						<h2>What is it?</h2>
+						<h2>~</h2>
+						<p>NoSQL database, column based</p>
+						<p>SQL-like interface</p>
+						<p>High performance, linear scalability</p>
+						<img height="300px" src="cassandra-netflix-performance.jpg" alt="linear"/>
+					</section>
+					<section>
+						<h1>Cassandra</h1>
+						<h2>Presentation Structure</h2>
+						<h2>~</h2>
+						<ul>
+							<li>NoSQL Concepts</li>
+							<li>Data Storage</li>
+							<li>Architecture</li>
+							<li>CQL</li>
+							<li>Data Modelling</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>NoSQL Concepts</h1>
+						<h1>~</h1>
+						<ul>
+							<li>What is noSQL?</li>
+							<li>How Cassandra fits in?</li>
+						</ul>
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section class="fragments">
+						<h1>NoSQL?</h1>
+						<h2>SQL or no SQL ?</h2>
+						<h2>~</h2>
+						<ul>
+							<li class="fragment"><strike>NoSQL</strike>. <strong>NonRelational!</strong></li>
+							<li class="fragment">Partitioning and scalability</li>
+							<li class="fragment">Schema-free</li>
+							<li class="fragment">CAP theorem ...</li>
+						</ul>
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>NoSQL</h1>
+						<h2>CAP theorem</h2>
+						<h2>~</h2>
+						<p>
+							<h3>Pick any two:</h3>
+							<ul>
+								<li>Consistency</li>
+								<li>Availability</li>
+								<li>Partition tolerance</small></li>
+							</ul>
+						</p>
+						<img height="300px" src="nosql_cap.png" alt="CAP"/>
+						<p>
+							<small>(Image copyright by <a href="http://blog.nahurst.com/visual-guide-to-nosql-systems">Nathan Hurst</a>)</small>
+						</p>
+					</section>
+					<section class="fragments">
+						<h1>NoSQL</h1>
+						<h2>Eventual consistency</h2>
+						<h2>~</h2>
+						<p>
+							<strong>Examples:</strong>
+							<ul>
+								<li class="fragment">Facebook posts</li>
+								<li class="fragment">Webshop prices and stock info</li>
+								<li class="fragment">Banking: Debit-card payment</li>
+							</ul>
+						</p>
+						<div class="fragment">
+							<h2>~</h2>
+							<strong>Tunable Consistency</strong>
+						</div>
+					</section>
+					<section>
+						<h1>NoSQL</h1>
+						<h2>database types</h2>
+						<h1>~</h1>
+						<ul>
+							<li>Key-value: HashTable (Redis, Riak, ...)</li>
+							<li>Document: Value is Json like (CouchDB, MongoDB, ...)</li>
+							<li>Column family: Map of maps (<strong>Cassandra</strong>, HBase, ...)</li>
+							<li>Graph: (Neo4j, InfoGrid, ...)</li>
+						</ul>
+					</section>
+					<section>
+						<h1>NoSQL</h1>
+						<h2>take away</h2>
+						<h1>~</h1>
+						<ul>
+							<li>Partitioning and Scalability</li>
+							<li>Schema-free</li>
+							<li>Database types: Key-value, Document, Column, Graph</li>
+							<li>CAP theorem: Consistency <strong>OR</strong> Availability</li>
+							<li>Consistency is over-rated</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Data Storage</h1>
+						<h1>~</h1>
+						<h3>Map of maps</h3>
+						<img height="300px" src="cf3.png" alt="CF"/>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Data Storage</h1>
+						<h2><a href="data-storage.txt">Demo!</a></h2>
+						<h2>~</h2>
+						<pre><code class="liveCoding java">
+set ColumnFamily['rowkey']['column'] = 'value';
+
+get ColumnFamily['rowkey'];
+get ColumnFamily['rowkey']['column'];
+
+list ColumnFamily;
+
+del ColumnFamily['rowkey'];
+del ColumnFamily['rowkey']['column'];
+						</code></pre>
+					</section>
+					<section>
+						<h1>Data Storage</h1>
+						<h2>take away</h2>
+						<h2>~</h2>
+						<ul>
+							<li>Map of maps</li>
+							<li>Column: name, value, timestamp</li>
+							<li>Wide rows (up to 2 billion columns)</li>
+							<li>Column names are often data</li>
+							<li>Keyspace &gt; column family &gt; column</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Architecture</h1>
+						<h1>~</h1>
+						<h3>Clustering</h3>
+						<h3>Partitioning and Replication</h3>
+						<h3>Durability and Performance</h3>
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Architecture</h1>
+						<h2>Clustering</h2>
+						<h2>~</h2>
+						<p>
+							All nodes are equal
+						</p>
+						<img src="clustering.png" width="350px" />
+						<p>Cluster formation, client connections</p>
+						</section>
+					<section>
+						<h1>Architecture</h1>
+						<h2>Gossip protocol</h2>
+						<h2>~</h2>
+						<p>
+						The nodes are in constant communication...
+						</p>
+						<p>
+						It is enough to know a few nodes, you will hear everything...
+						</p>
+						<p>
+						<span>
+							<img src="pletyka2.jpg" height="250px" />
+						</span>
+						<span>
+							<img src="gossip.png" height="250px" />
+						</span>
+						<br/>
+						</p>
+						<small>(picture copyright by <a href="http://www.kissmarta.com/paintings/silence&chat.php">Kiss Márta</a>)</small>
+					</section>
+					<section>
+						<h1>Architecture</h1>
+						<h2>Partitioning and Replication</h2>
+						<h2>~</h2>
+						<ul>
+							<li>Partitioning (random vs. byte ordered)</li>
+							<li>Replication factor</li>
+							<li>Replication strategies (Simple, network topology)</li>
+						</ul>
+						<p>
+								<img src="Part.png" height="250px" />
+								<img src="PartAndRepl.png" height="250px" />
+								<img src="ReplicationDC.jpg" height="250px" />
+						</p>
+					</section>
+					<section>
+						<h1>Architecture</h1>
+						<h2>Consistency Levels</h2>
+						<h2>~</h2>
+						<p>Waiting for acknowledgement from how many rows</p>
+						<h3>ONE, ALL, QUORUM, ...</h3>
+						<img src="Consistency.png" height="300px" />
+					</section>
+					<section>
+						<h1>Architecture</h1>
+						<h2>Durability and Performance</h2>
+						<h2>~</h2>
+						<ul>
+							<li>Durability (commit log -> memtable -> sstable)</li>
+							<li>Write performance - no read is needed</li>
+							<li>Read performance is also good</li>
+						</ul>
+						<img src="WriteProcess.png" height="250px" />
+					</section>
+					<section>
+						<h1>Architecture</h1>
+						<h2>take away</h2>
+						<h2>~</h2>
+						<ul>
+							<li>All nodes are equal (no single point of failure)</li>
+							<li>Gossip protocol</li>
+							<li>Tunable consistency</li>
+							<li>Updates are Inserts (no read is needed)</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Cassandra Query Language</h2>
+						<h1>~</h1>
+						<p>
+							SQL interface on the top of Cassandra data structure.
+						</p>
+						<p>
+							Being schema-free is nice, but it pushes schema definition to the business layer.
+						</p>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Standard SQL</h2>
+						<h2>~</h2>
+						<ul>
+						<li>CREATE TABLE, CREATE INDEX, ALTER TABLE</li>
+						<li>SELECT FROM</li>
+						<li>INSERT INTO, UPDATE, DELETE</li>
+						</ul>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Data types</h2>
+						<h2>~</h2>
+						<ul>
+							<li>ascii, varchar, text</li>
+							<li>blob</li>
+							<li>int, bigint, varint</li>
+							<li>float, double, decimal</li>
+							<li>boolean</li>
+							<li>timestamp</li>
+							<li>uuid</li>
+							<li>Collections: list&lt;T&gt;, set&lt;T&gt;, map&lt;TKey,TValue&gt;</li>
+						</ul>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>PRIMARY KEY</h2>
+						<h2>~</h2>
+						<ul>
+						<li>Mandatory, identifies rows</li>
+						<li>Cannot ALTER primary key fields</li>
+						<li>INSERT INTO = UPDATE</li>
+						</ul>
+						<pre><code>
+INSERT INTO User 
+	(UserId, FirstName, LastName) 
+VALUES 
+	(1, 'Ada', 'Lovelace');
+						</code></pre>
+						<pre><code>
+UPDATE User SET 
+	FirstName = 'Ada', 
+	LastName = 'Lovelace' 
+WHERE 
+	UserId = 1;
+						</code></pre>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>~</h2>
+						<p>
+							<a href="cql.txt">Demo!</a>
+						</p>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Lightweight transactions</h2>
+						<h2>~</h2>
+						<pre><code>
+INSERT INTO Users
+	(UserName, PasswordHash, FirstName, LastName)
+VALUES
+	('Ada', '###', 'Ada', 'Lovelace')
+IF NOT EXISTS;
+						</code></pre>
+						<pre><code>
+UPDATE Users
+	SET PasswordHash = 'newhash'
+WHERE UserName = 'Ada'
+	IF PasswordHash = 'oldhash';
+						</code></pre>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Think performance</h2>
+						<h2>~</h2>
+						<ul>
+							<li>No Joins</li>
+							<li>Cannot enumerate or count keys</li>
+							<li>LIMIT clause - default is 10000</li>
+							<li>WHERE: only by key or index (ALLOW FILTERING)</li>
+							<li>ORDER BY: very limited</li>
+						</ul>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Schema again?</h2>
+						<h2>~</h2>
+						<p>
+							Yes, but it is only metadata.
+						</p>
+						<p>
+							ALTER TABLE is and quick regardless of the number of rows.
+						</p>
+						<p>
+							NULL values are not stored.
+						</p>
+					</section>
+					<section class="fragments">
+						<h1>CQL</h1>
+						<h2>How tables are stored?</h2>
+						<h2>~</h2>
+						<p><a href="cql-storage.txt">Demo!</a></p>
+						<div class="fragment">
+							<h2>~</h2>
+							<p>PRIMARY KEY: Partition key + Clustering key</p>
+							<p>Collection storage</p>
+						</div>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Take away</h2>
+						<h2>~</h2>
+						<ul>
+							<li>SQL interface to Cassandra data structure</li>
+							<li>PRIMARY KEY is mandatory</li>
+							<li>PRIMARY KEY ((PartitionKeys), ClusteringKeys)</li>
+							<li>Collection types</li>
+							<li>UPSERT - Update and Insert are equivalent</li>
+							<li>Think performance: LIMIT, WHERE</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Data Modelling</h1>
+						<h1>~</h1>
+						<h2>Design by query</h2>
+						<h2>Secondary indexes</h2>
+						<h2>1-to-n relationships</h2>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Data Modelling</h1>
+						<h2>Design by query</h2>
+						<h2>~</h2>
+						<p>No joins -> Denormalize data</p>
+						<p>Multiple tables for the same data</p>
+						<pre><code>
+CREATE TABLE tracks_by_album (
+	id int,
+	title text,
+	album text.
+	artist text,
+	PRIMARY KEY(album, id)
+);
+						</code></pre>
+						<pre><code>
+CREATE TABLE tracks_by_artist (
+	id int,
+	title text,
+	album text.
+	artist text,
+	PRIMARY KEY(artist, id)
+);
+						</code></pre>
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section class="fragments">
+						<h1>Data Modelling</h1>
+						<h2>Secondary Indexes</h2>
+						<h2>~</h2>
+						<pre><code>
+CREATE TABLE tracks (
+	id int,
+	title text,
+	album text.
+	artist text,
+	PRIMARY KEY(id)
+);
+						</code></pre>
+						<pre><code>
+CREATE INDEX tracks_by_artist ON tracks(artist);
+CREATE INDEX tracks_by_album ON tracks(album);
+						</code></pre>
+						<p>Performance?</p>
+						<div class="fragment">
+							<p>Use with caution - maintained on each node</p>
+							<p>Works well if already filtered by partition key</p>
+						</div>
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Data Modelling</h1>
+						<h2>Denormalize Data</h2>
+						<h2>~</h2>
+						<p>Limit number of tables and requests</p>
+						<ul>
+							<li>Embed 1-to-1 entities</li>
+							<li>Embed 1-to-n entities</li>
+						</ul>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Data Modelling</h1>
+						<h2>1-to-n relationships</h2>
+						<h3>...using clustering keys</h3>
+						<h3>~</h3>
+						<pre><code>
+CREATE TABLE Bill_Clustering
+(
+	BillId int,
+	Seller text,
+	Buyer text,
+	ItemId int,
+	ItemName text,
+	ItemPrice decimal,
+	PRIMARY KEY (BillId, ItemId)
+);
+						</code></pre>
+						<h3><a href="modelling.txt">Demo!</a></h3>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Data Modelling</h1>
+						<h2>1-to-n relationships</h2>
+						<h3>...using collections</h3>
+						<h3>~</h3>
+						<pre><code>
+CREATE TABLE Bill_Collection
+(
+	BillId int,
+	Seller text,
+	Buyer text,
+	ItemNames list&lt;text&gt;,
+	ItemPrices list&lt;decimal&gt;,
+	PRIMARY KEY (BillId)
+);
+						</code></pre>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Data Modelling</h1>
+						<h2>1-to-n relationships</h2>
+						<h3>...using custom types (COMING SOON!)</h3>
+						<h3>~</h3>
+						<pre><code>
+CREATE TYPE Item
+(
+	ItemName text,
+	ItemPrice decimal
+);
+						</code></pre>
+						<pre><code>
+CREATE TABLE Bill_Type
+(
+	BillId int,
+	Seller text,
+	Buyer text,
+	Items list&lt;Item&gt;
+	PRIMARY KEY (BillId)
+);
+						</code></pre>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Data Modelling</h1>
+						<h2>Take Away</h2>
+						<h2>~</h2>
+						<ul>
+							<li>Design by query</li>
+							<li>Denormalize and duplicate data (if needed)</li>
+							<li>Careful with secondary indexes (can be much slower)</li>
+							<li>Inline 1-to-n relations</li>
+						</ul>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Finally...</h1>
+						<h1>~</h1>
+						<h2>Take away</h2>
+						<h2>Useful links</h2>
+						<h2>Time for questions</h2>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Finally...</h1>
+						<h2>Take Away</h2>
+						<h2>~</h2>
+						<ul>
+							<li>NOSQL: Consistency vs. Availability</li>
+							<li>Consistency is over-rated (but tunable ;))</li>
+							<li>Cassandra data storage: Map of maps, wide rows</li>
+							<li>CQL: Only an interface to the Cassandra data store</li>
+							<li>Writes without read</li>
+							<li>Design by query, denormalize, duplicate data if needed</li>
+							<li>Embed relationships when possible</li>
+						</ul>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Finally...</h1>
+						<h2>Useful links</h2>
+						<h2>~</h2>
+						<ul>
+							<li><a href="http://www.datastax.com/documentation/cassandra/2.0/cassandra/gettingStartedCassandraIntro.html">Cassandra documentation (DataStax)</a></li>
+							<li><a href="http://www.datastax.com/documentation/cql/3.1/cql/cql_intro_c.html">CQL for Cassandra 2.0 (DataStax)</a></li>
+							<li><a href="https://datastaxacademy.elogiclearning.com/">Cassandra Virtual Training (DataStax)</a></li>
+							<li><a href="http://www.opensourceconnections.com/2013/07/24/understanding-how-cql3-maps-to-cassandras-internal-data-structure/">Understanding How CQL3 Maps To Cassandra’s Internal Data Structure</a></li>
+							<li><a href="http://aphyr.com/posts/294-call-me-maybe-cassandra/">Call me maybe: Cassandra</a></li>
+						</ul>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>Finally...</h1>
+						<h2>Time for questions</h2>
+						<h2>~</h2>
+						<img src="questions.jpg" height="400px" alt="questions"/>
+						<p>(... and thanks for your attention)</p>
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+				</section>
+				
+				<section id="meta">
+					<section id="hotkeys">
+						<h2>Hotkeys</h2>
+						<ul>
+							<li>Arrows - navigation (down: inside a topic, right: next topic)
+							<li>f - full screen
+							<li>s - presentation mode
+							<li>o - overview
+							<li>b - blank screen (pause)
+							<li>Alt+Click - zoom in / zoom out
+							<li>Home - <a href="#/mainslide">first slide</a>
+						</ul>
+						<hr/>
+						<p>
+						Presentation written in <a href="http://lab.hakim.se/reveal-js/#/">reveal.js</a> by manually editing the HTML file (press view source). 
+						</p>
+					</section>
+				</section>
+
+				</div>
+			</div>
+		</div>
+
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,534 @@
+﻿<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>The Tale of Cassandra</title>
+
+		<meta name="description" content="SQL* in the NoSQL world">
+		<meta name="author" content="Attila Szucs">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/beige.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+			    <section>
+					<section id="mainslide">
+						<p>
+							<strong>&lt;epam&gt;</strong> 
+							<br/>
+							presents
+						</p>
+						<h2>●</h2> 
+						<h2>The Tale of</h2>
+						<h1>Cassandra</h1>
+						<h1>~</h1>
+						<p>
+							<small>Directed by</small>
+							<br/>
+							<strong>Attila Szűcs</strong>
+							<br/>
+							<small>(attila_szucs@epam.com)</small>
+						</p>
+						<p>
+							<small><a href="#/hotkeys">(user's guide)</a></small>
+						</p>
+					</section>
+					<section>
+						<h2>Cassandra</h2>
+						<h2>~</h2>
+						<p>NoSQL database, column based</p>
+						<p>SQL-like interface</p>
+						<p>High performance, linear scalability</p>
+						<img height="300px" src="http://medvekoma.net/reveal/img/cassandra/cassandra-netflix-performance.jpg" alt="linear"/>
+					</section>
+					<section>
+						<h2>Cassandra</h2>
+						<h2>Presentation Structure</h2>
+						<h2>~</h2>
+						<ul>
+							<li>NoSQL Concepts</li>
+							<li>Data Storage</li>
+							<li>Architecture</li>
+							<li>CQL</li>
+							<li>Data Modelling</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>NoSQL Concepts</h1>
+						<h1>~</h1>
+						<ul>
+							<li>What is noSQL?</li>
+							<li>How Cassandra fits in?</li>
+						</ul>
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section class="fragments">
+						<h1>SQL or no SQL ?</h1>
+						<h1>~</h1>
+						<ul>
+							<li class="fragment"><strike>NoSQL</strike>. <strong>NonRelational!</strong></li>
+							<li class="fragment">Partitioning and scalability</li>
+							<li class="fragment">Schema-free</li>
+							<li class="fragment">CAP theorem ...</li>
+						</ul>
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h2>CAP theorem</h2>
+						<h2>~</h2>
+						<p>
+							<strong>Pick any two:</strong>
+							<ul>
+								<li>Consistency</li>
+								<li>Availability</li>
+								<li>Partition tolerance</small></li>
+							</ul>
+						</p>
+						<img height="300px" src="http://medvekoma.net/reveal/img/cassandra/nosql_cap.png" alt="CAP"/>
+						<p>
+							<small>(Image copyright by <a href="http://blog.nahurst.com/visual-guide-to-nosql-systems">Nathan Hurst</a>)</small>
+						</p>
+					</section>
+					<section class="fragments">
+						<h2>NoSQL</h2>
+						<h2>Eventual consistency</h2>
+						<h2>~</h2>
+						<p>
+							<strong>Examples:</strong>
+							<ul>
+								<li class="fragment">Facebook posts</li>
+								<li class="fragment">Webshop prices and stock info</li>
+								<li class="fragment">Banking: Debit-card payment</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h2>NoSQL</h2>
+						<h2>database types</h2>
+						<h1>~</h1>
+						<ul>
+							<li>Key-value: HashTable (Redis, Riak, ...)</li>
+							<li>Document: Value is Json like (CouchDB, MongoDB, ...)</li>
+							<li>Column family: Map of maps (<strong>Cassandra</strong>, HBase, ...)</li>
+							<li>Graph: (Neo4j, InfoGrid, ...)</li>
+						</ul>
+					</section>
+					<section>
+						<h2>NoSQL</h2>
+						<h2>take away</h2>
+						<h1>~</h1>
+						<ul>
+							<li>Partitioning and Scalability</li>
+							<li>Schema-free</li>
+							<li>Database types: Key-value, Document, Column, Graph</li>
+							<li>CAP theorem: Consistency <strong>OR</strong> Availability</li>
+							<li>Consistency is over-rated</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Data Storage</h1>
+						<h1>~</h1>
+						<h3>Map of maps</h3>
+						<img height="300px" src="http://medvekoma.net/reveal/img/cassandra/cf3.png" alt="CF"/>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h2>Data Storage</h2>
+						<h2>Demo!</h2>
+						<h2>~</h2>
+						<pre><code class="liveCoding java">
+set ColumnFamily['rowkey']['column'] = 'value';
+
+get ColumnFamily['rowkey'];
+get ColumnFamily['rowkey']['column'];
+
+list ColumnFamily;
+
+del ColumnFamily['rowkey'];
+del ColumnFamily['rowkey']['column'];
+						</code></pre>
+					</section>
+					<section>
+						<h2>Data Storage</h2>
+						<h2>take away</h2>
+						<h2>~</h2>
+						<ul>
+							<li>Map of maps</li>
+							<li>Column: name, value, timestamp</li>
+							<li>Wide rows (2 billion rows)</li>
+							<li>Column names are often data</li>
+							<li>Keyspace &gt; column family &gt; column</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Architecture</h1>
+						<h1>~</h1>
+						<h3>Clustering</h3>
+						<h3>Partitioning and Replication</h3>
+						<h3>Durability and Performance</h3>
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h2>Architecture</h2>
+						<h2>Clustering</h2>
+						<h2>~</h2>
+						<p>
+							All nodes are equal
+						</p>
+						<img src="http://medvekoma.net/reveal/img/cassandra/clustering.png" width="350px" />
+						<p>Cluster formation, client connections</p>
+						</section>
+					<section>
+						<h2>Architecture</h2>
+						<h2>Gossip protocol</h2>
+						<h2>~</h2>
+						<p>
+						The nodes are in constant communication...
+						</p>
+						<p>
+						It is enough to know a few nodes, you will hear everything...
+						</p>
+						<p>
+						<span>
+						<img src="http://medvekoma.net/reveal/img/cassandra/pletyka2.jpg" height="250px" />
+						</span>
+						<span>
+						<img src="http://medvekoma.net/reveal/img/cassandra/gossip.png" height="250px" />
+						</span>
+						<br/>
+						</p>
+						<small>(picture copyright by <a href="http://www.kissmarta.com/paintings/silence&chat.php">Kiss Márta</a>)</small>
+					</section>
+					<section>
+						<h2>Architecture</h2>
+						<h2>Partitioning and Replication</h2>
+						<h2>~</h2>
+						<ul>
+							<li>Partitioning (random vs. byte ordered)</li>
+							<li>Replication factor</li>
+							<li>Replication strategies (Simple, network topology)</li>
+						</ul>
+						<p>
+							<span>
+							<img src="http://medvekoma.net/reveal/img/cassandra/Part.png" height="250px" />
+							</span>
+							<span>
+							<img src="http://medvekoma.net/reveal/img/cassandra/PartAndRepl.png" height="250px" />
+							</span>
+							<span>
+							<img src="http://medvekoma.net/reveal/img/cassandra/ReplicationDC.jpg" height="250px" />
+							</span>
+						</p>
+					</section>
+					<section>
+						<h2>Architecture</h2>
+						<h2>Consistency Levels</h2>
+						<h2>~</h2>
+						<p>Waiting for acknowledgement from how many rows</p>
+						<h3>ONE, ALL, QUORUM, ...</h3>
+						<img src="http://medvekoma.net/reveal/img/cassandra/Consistency.png" height="300px" />
+					</section>
+					<section>
+						<h2>Architecture</h2>
+						<h2>Durability and Performance</h2>
+						<h2>~</h2>
+						<ul>
+							<li>Durability (commit log -> memtable -> sstable)</li>
+							<li>Write performance - no read is needed</li>
+							<li>Read performance is also good</li>
+						</ul>
+						<img src="http://medvekoma.net/reveal/img/cassandra/WriteProcess.png" height="250px" />
+					</section>
+					<section>
+						<h2>Architecture</h2>
+						<h2>take away</h2>
+						<h2>~</h2>
+						<ul>
+							<li>All nodes are equal (no single point of failure)</li>
+							<li>Gossip protocol</li>
+							<li>Tunable consistency</li>
+							<li>Updates are Inserts (no read is needed)</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Cassandra Query Language</h2>
+						<h1>~</h1>
+						<p>
+							SQL-like interface on the top of Cassandra data structure.
+						</p>
+						<p>
+							Being schema-free is nice, but it pushes schema definition to the business layer.
+						</p>
+
+						<aside class="notes">
+							Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						</aside>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>CREATE TABLE</h2>
+						<h2>~</h2>
+						<pre><code>
+CREATE TABLE User
+(
+  UserId int,
+  FirstName text,
+  LastName text,
+  BirthDate timestamp,
+  PRIMARY KEY (UserId)
+);
+						</code></pre>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Alter Table, Secondary Index</h2>
+						<h2>~</h2>
+						<pre><code>
+ALTER TABLE User ADD UserName text;
+---						
+CREATE INDEX UserByUserName ON User(UserName);
+						</code></pre>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>SELECT</h2>
+						<h2>~</h2>
+						<pre><code>
+SELECT * FROM User;
+
+SELECT * FROM User WHERE UserId = 1;
+
+SELECT * FROM User LIMIT 10;
+						</code></pre>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>INSERT INTO, UPDATE</h2>
+						<h2>~</h2>
+						<p>
+							Insert and update are equivalent.
+						</p>
+						<pre><code>
+INSERT INTO User 
+	(UserId, FirstName, LastName) 
+VALUES 
+	(1, 'Ada', 'Lovelace');
+---------
+
+UPDATE User SET 
+	FirstName = 'Ada', 
+	LastName = 'Lovelace' 
+WHERE 
+	UserId = 1;
+						</code></pre>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Data types</h2>
+						<h2>~</h2>
+						<ul>
+							<li>ascii, varchar, text</li>
+							<li>blob</li>
+							<li>int, bigint, varint, float, double, decimal</li>
+							<li>boolean</li>
+							<li>timestamp</li>
+							<li>uuid</li>
+							<li>Collections: list, set, map</li>
+						</ul>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>~</h2>
+						<p>
+							Demo!
+						</p>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Lightweight transactions</h2>
+						<h2>~</h2>
+						<pre><code>
+CREATE TABLE Users
+(
+	UserName text PRIMARY KEY,
+	PasswordHash text,
+	FirstName text,
+	LastName text
+);
+---
+INSERT INTO Users
+	(UserName, PasswordHash, FirstName, LastName)
+VALUES
+	('Ada', '###', 'Ada', 'Lovelace')
+IF NOT EXISTS;
+						</code></pre>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Think performance</h2>
+						<h2>~</h2>
+						<ul>
+							<li>No Joins</li>
+							<li>LIMIT clause - default is 10000</li>
+							<li>WHERE: only by key or index</li>
+							<li>(ALLOW FILTERING)</li>
+						</ul>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Schema again?</h2>
+						<h2>~</h2>
+						<p>
+							Yes, but it is only metadata.
+						</p>
+						<p>
+							ALTER TABLE is cheap and quick.
+						</p>
+						<p>
+							NULL values are not stored.
+						</p>
+					</section>
+					<section>
+						<h1>CQL</h1>
+						<h2>Take away</h2>
+						<h2>~</h2>
+						<ul>
+							<li>SQL interface to Cassandra data structure</li>
+							<li>PRIMARY KEY is mandatory</li>
+							<li>UPSERT - Update and Insert are equivalent</li>
+							<li>Think performance: LIMIT, WHERE</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<h1>Data Modelling</h1>
+					<h1>~</h1>
+					<p>Denormalize data</p>
+					<p>Table by query</p>
+					<p>Understand CQL storage</p>
+
+					<aside class="notes">
+						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+					</aside>
+				</section>
+
+				<section>
+					<h1>Take Away</h1>
+					<p>
+						reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with
+						support for CSS 3D transforms to see it in its full glory.
+					</p>
+
+					<aside class="notes">
+						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+					</aside>
+				</section>
+				
+				<section id="meta">
+					<section id="hotkeys">
+						<h2>Hotkeys</h2>
+						<ul>
+							<li>Arrows - navigation (down: inside a topic, right: next topic)
+							<li>f - full screen
+							<li>s - presentation mode
+							<li>o - overview
+							<li>b - blank screen (pause)
+							<li>Home - <a href="#/mainslide">first slide</a>
+						</ul>
+					</section>
+				</section>
+
+				</div>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

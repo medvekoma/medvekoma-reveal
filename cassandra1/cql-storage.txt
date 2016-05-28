@@ -1,0 +1,49 @@
+
+-- 1 field --
+-- cqlsh EVHUBUDSD19F5
+
+CREATE TABLE User1
+(
+  UserId int,
+  FirstName text,
+  LastName text,
+  PRIMARY KEY (UserId)
+);
+
+INSERT INTO user1 (userid, firstname, lastname) VALUES ( 1, 'Ada', 'Lovelace');
+INSERT INTO user1 (userid, firstname, lastname) VALUES ( 2, 'Charles', 'Babbage');
+select * from user1;
+
+-- cassandra-cli --host EVHUBUDSD19F5
+list User1;
+
+-- 2 fields --
+
+CREATE TABLE User2 
+(
+  userid int, 
+  countrycode text, 
+  firstname text, 
+  lastname text, 
+  primary key (userId, CountryCode)
+);
+INSERT INTO User2 (userid, CountryCode, firstname, lastname) VALUES ( 1, 'UK', 'Ada', 'Lovelace');
+INSERT INTO User2 (userid, CountryCode, firstname, lastname) VALUES ( 2, 'UK', 'Charles', 'Babbage');
+INSERT INTO User2 (userid, CountryCode, firstname, lastname) VALUES ( 1, 'HU', 'John von', 'Neumann');
+select * from user2;
+
+list User2;
+
+-- collections --
+
+CREATE TABLE Contacts (Id int, Name text, Phones map<text, text>, PRIMARY KEY (Id));
+
+INSERT INTO Contacts (Id, Name, Phones) VALUES ( 1, 'Peter Dontcall', {'Home':'+36 1 1234567','Work':'+36 30 7894561'});
+
+select * from contacts;
+
+UPDATE Contacts SET Phones = Phones + {'Other':'+1 205 7897897'} WHERE Id = 1;
+
+select * from contacts;
+
+list Contacts;

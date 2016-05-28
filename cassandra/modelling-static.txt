@@ -1,0 +1,36 @@
+CREATE TABLE Bill_Static
+(
+	BillId int,
+	Seller text static,
+	Buyer text static,
+	ItemId int,
+	ItemName text,
+	ItemPrice decimal,
+	PRIMARY KEY (BillId, ItemId)
+);
+
+INSERT INTO Bill_Static 
+(
+	billid, Seller, Buyer, 
+	itemid, ItemName, ItemPrice
+) 
+VALUES 
+( 
+	1, 'Seller', 'Buyer', 
+	1001, 'iPad 32GB', 1299.00
+);
+
+INSERT INTO Bill_Static 
+(
+	billid, 
+	itemid, ItemName, ItemPrice
+) 
+VALUES 
+( 
+	1, 
+	1015, 'Headset XDF', 79.90
+);
+
+SELECT * FROM Bill_Static;
+
+list Bill_Static;

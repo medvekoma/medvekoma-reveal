@@ -1,0 +1,20 @@
+cassandra-cli --host EVHUBUDSD19F5
+
+CREATE KEYSPACE ds;
+USE ds;
+
+CREATE COLUMN FAMILY bill;
+
+ASSUME bill KEYS as UTF8;
+ASSUME bill COMPARATOR as UTF8;
+ASSUME bill VALIDATOR as UTF8;
+
+SET bill['BL001']['Seller'] = 'Seller1';
+SET bill['BL001']['Buyer'] = 'Buyer1';
+SET bill['BL001']['Item_1001_Name'] = 'IPad 32GB';
+SET bill['BL001']['Item_1001_Price'] = '129000';
+SET bill['BL001']['Item_1015_Name'] = 'Headset CX12';
+SET bill['BL001']['Item_1015_Price'] = '9200';
+
+GET bill['BL001'];
+LIST bill;
